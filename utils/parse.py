@@ -1,6 +1,6 @@
 from selectolax.parser import Node
 
-def parse_raw_attibutes(node: Node, selectors: list):
+def parse_raw_attibutes(node: Node, selectors: list[list]) -> list[dict]:
     parsed = {}
 
     # For all the nodes passed in, I want the all the following attributes

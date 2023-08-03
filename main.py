@@ -1,7 +1,6 @@
 from selectolax.parser import HTMLParser
-from utils.extract import get_html_body
-from utils.pipeline import clean_item
-import pandas as pd
+from utils.extract import get_html
+from utils.pipeline import clean_item, save_to_file
 from utils.parse import parse_raw_attibutes
 from config.tools import get_config
 
@@ -15,7 +14,7 @@ from config.tools import get_config
         # Discount %
 
 
-def scrape_games(html, config):
+def scrape_games(html, config) -> list[dict]:
     tree = HTMLParser(html)
 
     # Get the item description we want to scrape
@@ -26,9 +25,12 @@ def scrape_games(html, config):
     # For now we just have one container of concern
     container = parse_raw_attibutes(tree, config['container'])
     items = []
-    # For every container we have specific attributes of interest from an item in the container
+    # For every container we have specific attributes of interest from an item 
     for node in container['store_sale_divs']:
+        ## Initial paring the item
         parsed = parse_raw_attibutes(node, config['container'][0]['item'])
+
+        ## Clean the item in pipeline
         cleaned_item = clean_item(parsed)
         items.append(cleaned_item)
 
@@ -38,12 +40,9 @@ def scrape_games(html, config):
 if __name__ == '__main__':
     config = get_config() 
     url = config['url']
-    html = get_html_body(url, config)
+    html = get_html(url, config)
     games = scrape_games(html, config)
+    save_to_file(data=games)
+
     
-    # Display and save clean data
-    pd.set_option('display.max_rows', None)
-    pd.set_option('display.max_columns', None)
-    df = pd.DataFrame(games)
-    df.to_csv('discount-games.csv', index=False)
-    print(df)
+    

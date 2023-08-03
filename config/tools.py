@@ -1,5 +1,11 @@
 _config = {
     "url": "https://store.steampowered.com/specials",
+    "meta": {
+        "name": "Steam Sales Scraper",
+        "description": "Extracts the highest discounted games from Steam",
+        "author": "Jay Hong",
+        "version": "0.1.1"
+    },
     "container": [
         {
             "parent_container": "div[class*='facetedbrowse_FacetedBrowseInnerCtn']",
@@ -46,8 +52,14 @@ _config = {
                     "type": "text"
                 },
                 {
-                    "name": "original_price",
+                    "name": "original_price NTD",
                     "selector": "div[class*='salepreviewwidgets_StoreOriginalPrice_']",
+                    "match": "first",
+                    "type": "text"
+                },
+                {
+                    "name": "sale_price NTD",
+                    "selector": "div[class*='salepreviewwidgets_StoreSalePriceBox']",
                     "match": "first",
                     "type": "text"
                 },

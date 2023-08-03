@@ -1,7 +1,7 @@
 from playwright.sync_api import sync_playwright
 
 
-def get_html_body(url, config):
+def get_html(url, config):
 
     TIMEOUT = 90000 #ms
     # Set upt broswer, specify browser 
