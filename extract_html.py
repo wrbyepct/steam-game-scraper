@@ -1,5 +1,6 @@
 from playwright.sync_api import sync_playwright
-from css_select import CSS
+from config import tools
+
 
 def get_html_body(url):
 
@@ -12,10 +13,15 @@ def get_html_body(url):
         
         # Wait for JavaScript loading 
         page.wait_for_load_state('networkidle', timeout=TIMEOUT)
+        # Scroll down the window to make it load more content
         page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
-        page.wait_for_selector(f'{CSS.GAME_COLUMN_SELECTOR}', timeout=TIMEOUT)
-        
 
-        return page.inner_html('body')
+        config = tools.get_config()
+        container = config['container'][0]
+        page.wait_for_selector(container['selector'], timeout=TIMEOUT)
+
+        # Return only the section of html we want
+        game_rows_container = page.query_selector(container['parent_container'])
+        return game_rows_container.inner_html()
 
 

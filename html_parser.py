@@ -1,8 +1,9 @@
 from selectolax.parser import HTMLParser
-import json
 from extract_html import get_html_body
 from pipeline import clean_item
 import pandas as pd
+from utils.utils import parse_raw_attibutes
+from config.tools import get_config
 
         # ITEM WE NEED 
         # 1. title 
@@ -17,35 +18,23 @@ import pandas as pd
 def scrape_games(html):
     tree = HTMLParser(html)
 
-    with open('config.json', "r") as f:
-        css = json.load(f)
-  
-    items = tree.css(css['item'])
-    games = []
-    for item in items:
-        game = {}
-        title = item.css_first(css['title']).text()
-        thumbnail = item.css_first(css['thumbnail']).attrs.get('src') 
-        tags = item.css_first(css['tags']).text(separator=",") 
-        rating = item.css_first(css['rating']).text(deep=False) 
-        num_reviews = item.css_first(css['num_reviews']).text() 
-        price = item.css_first(css['price']).text()
-        discount = item.css_first(css['discount']).text() 
+    # Get the item description we want to scrape
+    # E.g All the divs that contain games
+    # E.g What attribute we want to scrape from the item?
+    #       i.e. price, title, discount, date, etc
+    config = get_config() 
+    print(config['container'])
+    
+    # For now we just one container of concern
+    container = parse_raw_attibutes(tree, config['container'])
+    items = []
+    # For every container we have specific attributes of interest from an item in the container
+    for node in container['store_sale_divs']:
+        parsed = parse_raw_attibutes(node, config['container'][0]['item'])
+        cleaned_item = clean_item(parsed)
+        items.append(cleaned_item)
 
-        game = {
-            "title": title,
-            "thumbnail": thumbnail,
-            "tags": tags,
-            "rating": rating,
-            "num_reviews": num_reviews,
-            "original_price": price,
-            "discount % off": discount
-        }
-
-        clean_game = clean_item(game)
-        games.append(clean_game)
-
-    return games
+    return items
 
 
 if __name__ == '__main__':
