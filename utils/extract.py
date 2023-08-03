@@ -1,8 +1,7 @@
 from playwright.sync_api import sync_playwright
-from config import tools
 
 
-def get_html_body(url):
+def get_html_body(url, config):
 
     TIMEOUT = 90000 #ms
     # Set upt broswer, specify browser 
@@ -16,7 +15,6 @@ def get_html_body(url):
         # Scroll down the window to make it load more content
         page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
 
-        config = tools.get_config()
         container = config['container'][0]
         page.wait_for_selector(container['selector'], timeout=TIMEOUT)
 

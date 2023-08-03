@@ -1,4 +1,4 @@
-from selectolax.parser import HTMLParser, Node
+from selectolax.parser import Node
 
 def parse_raw_attibutes(node: Node, selectors: list):
     parsed = {}
@@ -21,12 +21,9 @@ def parse_raw_attibutes(node: Node, selectors: list):
 
         # Determine if it's a select all or first 
         if match == "all":
+            # We either extract all nodes or texts from an item
             if type_ == "text":
                 parsed[name] = [n.text() for n in node.css(selector)]
-            elif type_ == "src":
-                parsed[name] = [n.attrs.get('src') for n in node.css(selector)]
-            elif type_ == "href":
-                parsed[name] = [n.attrs.get('href') for n in node.css(selector)]
             else:
                 parsed[name] = node.css(selector)
         else:
